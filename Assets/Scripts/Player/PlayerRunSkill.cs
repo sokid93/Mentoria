@@ -16,11 +16,7 @@ namespace Player
         [Header("[Configuration]")]
         [SerializeField] private float runSpeed;
         [SerializeField] private float timePlayerCanSprint;
-        [SerializeField] float timeSprinting 
-        {
-            get => timeSprinting;
-            set => timeSprinting = Math.Max(value, 0); 
-        }
+        [field: SerializeField] public float timeSprinting { get; private set; }
 
         [Header("[Values]")]
         bool canSprint = true;
