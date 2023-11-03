@@ -1,8 +1,7 @@
 using System;
 using UnityEngine;
+using Player;
 
-namespace Player
-{
 
     public class PlayerRunSkill : MonoBehaviour
     {
@@ -14,118 +13,134 @@ namespace Player
         [SerializeField] ParticleSystem sweatParticle;
 
         [Header("[Configuration]")]
-        [SerializeField] private float runSpeed;
-        [SerializeField] private float timePlayerCanSprint;
+        
         [field: SerializeField] public float timeSprinting { get; private set; }
 
-        [Header("[Values]")]
-        bool canSprint = true;
-        public bool isOnMug;
-        private bool isPlayerTired;
-        
+
         private void Update()
+    {
+        SprintSkill();
+
+        if (IsTired())
         {
-            SprintSkill();
-
-            if (timeSprinting >= timePlayerCanSprint)
-            {
-                TiredState();
-            }
-            else if (timeSprinting <= 0)
-            {
-                RestedState();
-            }
-
-            TiredSoundControl();
+            TiredState();
+        }
+        else if (IsRested())
+        {
+            RestedState();
         }
 
-        private void TiredState()
-        {
-            canSprint = false;
-            sweatParticle.Play();
-        }
+        TiredSoundControl();
+    }
 
-        private void RestedState()
+    private void SprintSkill()
+    {
+        if (PlayerPressSprint() && CanSprint())
         {
-            timeSprinting = 0;
-            canSprint = true;
-            sweatParticle.Stop();
-        }
+            SetAnimatorSpeed(2f);
+            timeSprinting += GetDeltaTime();
 
-        private void TiredSoundControl()
+            if (IsOnMug())
+                SetPlayerMovementSpeed(runSpeed / 2);
+            else
+                SetPlayerMovementSpeed(runSpeed);
+
+
+        }
+        else
         {
-            if (!canSprint)
+            if (IsOnMug())
             {
-                if (isPlayerTired)
-                {
-                    PlayTiredSound();
-                }
+                SetPlayerMovementSpeed(0.5f);
+                timeSprinting -= GetDeltaTime();
             }
             else
             {
-                StopTiredSound();
+                SetAnimatorSpeed(1f);
+                SetPlayerMovementSpeed(playerMovement.normalSpeed);
+                timeSprinting -= GetDeltaTime();
             }
-        }
 
-        private void PlayTiredSound()
-        {
-            isPlayerTired = false;
-            tiredSound.Play();
-        }
-
-        private void StopTiredSound()
-        {
-            tiredSound.Stop();
-            isPlayerTired = true;
-        }
-
-        private void SprintSkill()
-        {
-            if (Input.GetKey(KeyCode.LeftShift) && timeSprinting < timePlayerCanSprint)
-            {
-                if (canSprint)
-                {
-                    SetAnimatorSpeed(2f);
-                    timeSprinting += GetDeltaTime();
-
-                    if (isOnMug)
-                        SetPlayerMovementSpeed(runSpeed / 2);
-                    else
-                        SetPlayerMovementSpeed(runSpeed);
-                }
-
-            }
-            else
-            {
-                if (!isOnMug)
-                {
-                    SetAnimatorSpeed(1f);
-                    SetPlayerMovementSpeed(playerMovement.normalSpeed);
-                    timeSprinting -= GetDeltaTime();
-                }
-                else
-                {
-                    SetPlayerMovementSpeed(0.5f);
-                    timeSprinting -= GetDeltaTime();
-                }
- 
-            }
-        }
-
-        private static float GetDeltaTime()
-        {
-            return Time.deltaTime;
-        }
-
-        private void SetAnimatorSpeed(float newSpeed)
-        {
-            DayAnimator.speed = newSpeed;
-            nightAnimator.speed = newSpeed;
-        }
-
-        private void SetPlayerMovementSpeed(float newSpeed)
-        {
-            playerMovement.speed = newSpeed;
         }
     }
+
+    private static bool IsOnMug()
+    {
+        return Booleans.isOnMug;
+    }
+
+    private bool PlayerPressSprint()
+    {
+        return Input.GetKey(KeyCode.LeftShift);
+    }
+    private bool CanSprint()
+    {
+        return timeSprinting < timePlayerCanSprint && Booleans.canSprint;
+    }
+
+    private static float GetDeltaTime()
+    {
+        return Time.deltaTime;
+    }
+
+    private void SetAnimatorSpeed(float newSpeed)
+    {
+        DayAnimator.speed = newSpeed;
+        nightAnimator.speed = newSpeed;
+    }
+
+    private void SetPlayerMovementSpeed(float newSpeed)
+    {
+        playerMovement.speed = newSpeed;
+    }
+    private bool IsRested()
+    {
+        return timeSprinting <= 0;
+    }
+
+    private bool IsTired()
+    {
+        return timeSprinting >= timePlayerCanSprint;
+    }
+
+    private void TiredState()
+    {
+        Booleans.canSprint = false;
+        sweatParticle.Play();
+    }
+
+    private void RestedState()
+    {
+        timeSprinting = 0;
+        Booleans.canSprint = true;
+        sweatParticle.Stop();
+    }
+
+    private void TiredSoundControl()
+    {
+        if (!Booleans.canSprint)
+        {
+            if (Booleans.isPlayerTired)
+            {
+                PlayTiredSound();
+            }
+        }
+        else
+        {
+            StopTiredSound();
+        }
+    }
+
+    private void PlayTiredSound()
+    {
+        Booleans.isPlayerTired = false;
+        tiredSound.Play();
+    }
+
+    private void StopTiredSound()
+    {
+        tiredSound.Stop();
+        Booleans.isPlayerTired = true;
+    }
 }
+

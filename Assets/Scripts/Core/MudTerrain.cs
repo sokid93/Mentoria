@@ -17,7 +17,7 @@ namespace Core
             {
                 //playerMove.normalSpeed = mugSpeed;
                 playerMove.speed = mugSpeed;
-                playerRunSkill.isOnMug = true;
+                Booleans.isOnMug = true;
             }
         }
 
@@ -26,7 +26,7 @@ namespace Core
             if (other.gameObject.CompareTag("Player"))
             {
                 playerMove.speed = playerMove.normalSpeed;
-                playerRunSkill.isOnMug = false;
+                Booleans.isOnMug = false;
             }
         }
     }
