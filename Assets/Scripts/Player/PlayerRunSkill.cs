@@ -11,8 +11,6 @@ using Player;
         [SerializeField] Animator nightAnimator;
         [SerializeField] AudioSource tiredSound;
         [SerializeField] ParticleSystem sweatParticle;
-
-        [Header("[Configuration]")]
         
         [field: SerializeField] public float timeSprinting { get; private set; }
 
@@ -41,9 +39,9 @@ using Player;
             timeSprinting += GetDeltaTime();
 
             if (IsOnMug())
-                SetPlayerMovementSpeed(runSpeed / 2);
+                SetPlayerMovementSpeed(Configuration.runSpeed / 2);
             else
-                SetPlayerMovementSpeed(runSpeed);
+                SetPlayerMovementSpeed(Configuration.runSpeed);
 
 
         }
@@ -75,7 +73,7 @@ using Player;
     }
     private bool CanSprint()
     {
-        return timeSprinting < timePlayerCanSprint && Booleans.canSprint;
+        return timeSprinting < Configuration.timePlayerCanSprint && Booleans.canSprint;
     }
 
     private static float GetDeltaTime()
@@ -100,7 +98,7 @@ using Player;
 
     private bool IsTired()
     {
-        return timeSprinting >= timePlayerCanSprint;
+        return timeSprinting >= Configuration.timePlayerCanSprint;
     }
 
     private void TiredState()
