@@ -39,27 +39,46 @@ using Player;
             timeSprinting += GetDeltaTime();
 
             if (IsOnMug())
-                SetPlayerMovementSpeed(Configuration.runSpeed / 2);
+                SetPlayerSlowRun();
             else
-                SetPlayerMovementSpeed(Configuration.runSpeed);
-
+                SetPlayerRunSpeed();
 
         }
         else
         {
             if (IsOnMug())
             {
-                SetPlayerMovementSpeed(0.5f);
+                SetPlayerSlowWalk();
                 timeSprinting -= GetDeltaTime();
             }
             else
             {
                 SetAnimatorSpeed(1f);
-                SetPlayerMovementSpeed(playerMovement.normalSpeed);
+                SetPlayerNormalSpeed();
                 timeSprinting -= GetDeltaTime();
             }
 
         }
+    }
+
+    private void SetPlayerSlowWalk()
+    {
+        SetPlayerMovementSpeed(0.5f);
+    }
+
+    private void SetPlayerSlowRun()
+    {
+        SetPlayerMovementSpeed(Configuration.runSpeed / 2);
+    }
+
+    private void SetPlayerNormalSpeed()
+    {
+        SetPlayerMovementSpeed(playerMovement.normalSpeed);
+    }
+
+    private void SetPlayerRunSpeed()
+    {
+        SetPlayerMovementSpeed(Configuration.runSpeed);
     }
 
     private static bool IsOnMug()
